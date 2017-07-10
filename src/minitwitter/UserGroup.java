@@ -17,13 +17,16 @@ import minitwitter.Visitor.Visitor;
  */
 public class UserGroup extends Subject implements Group {
     
+
     private static int size = 0;
     private String ID;
     private List<Group> children;
-    private boolean found;
+    private static boolean found = false;
 
     public boolean isFound() {
-        return found;
+        boolean tempFound = found;
+        found = false;
+        return tempFound;
     }
     
     public UserGroup(String ID) {
@@ -53,7 +56,6 @@ public class UserGroup extends Subject implements Group {
     
     @Override
     public void foundUserGroup (String ID) {
-        boolean found =  false;
         if (this.ID.equals(ID)) {
             found = true;
         } else {
@@ -63,7 +65,6 @@ public class UserGroup extends Subject implements Group {
                 }
             }
         }
-        //return found;
     }
 
     public UserGroup() {

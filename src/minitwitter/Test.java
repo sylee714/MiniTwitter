@@ -53,13 +53,21 @@ public class Test {
         System.out.println("# of users: " + sizeVisitor.getUserSize());
         System.out.println("# of user groups: " + sizeVisitor.getUserGroupSize());
 
-        /*
-        System.out.println(root.foundUserGroup("Root"));
-        System.out.println(root.foundUserGroup("userGroup1"));
-        System.out.println(root.foundUserGroup("userGroup2"));
-        System.out.println(root.foundUserGroup("userGroup3"));
-        System.out.println(root.foundUserGroup("userGroup4"));
-        */
+        root.foundUserGroup("Root");
+        System.out.println(root.isFound());
+        root.foundUserGroup("userGroup1");
+        System.out.println(root.isFound());
+        root.foundUserGroup("userGroup2");
+        System.out.println(root.isFound());
+        root.foundUserGroup("userGroup3");
+        System.out.println(root.isFound());
+        root.foundUserGroup("userGroup4");
+        System.out.println(root.isFound());
+        root.foundUserGroup("userGroup5");
+        System.out.println(root.isFound());
+        root.foundUserGroup("user5");
+        System.out.println(root.isFound());
+        
         
     }
     
