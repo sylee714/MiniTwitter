@@ -11,15 +11,22 @@ import minitwitter.Visitor.Visitor;
  *
  * @author MingKie
  */
-public interface Group {
+public interface Group extends Component {
+    
+    public boolean search(String ID);
     
     public void setID(String ID);
     
     public String getId();
     
+    @Override
     public void accept(Visitor visitor);
     
     public void display();
 
-    public void foundUserGroup(String ID);
+    public void findUserGroup(String ID);
+    
+    public boolean findParent(String ID);
+    
+    public User findUser(String ID);
 }

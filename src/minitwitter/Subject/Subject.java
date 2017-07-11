@@ -24,6 +24,7 @@ public abstract class Subject {
 		observers.remove(observer);
 	}
 	
+
     public void notifyObservers() {
         for(Observer ob : observers) {
             ob.update(this);

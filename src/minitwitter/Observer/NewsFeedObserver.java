@@ -5,17 +5,38 @@
  */
 package minitwitter.Observer;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import minitwitter.Subject.Subject;
+import minitwitter.User;
 
 /**
  *
  * @author MingKie
  */
 public class NewsFeedObserver implements Observer {
+    
+    private DefaultListModel newsFeedModel;
+    private JList newsFeed;
 
+    public NewsFeedObserver(DefaultListModel newsFeedModel, JList newsFeed) {
+        this.newsFeedModel = newsFeedModel;
+        this.newsFeed = newsFeed;
+    }
+    
     @Override
     public void update(Subject subject) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (User.getState() == 1) {
+        if (subject instanceof User) {
+            User user = (User) subject;
+            int index = user.getNewsFeed().size() - 1;
+            System.out.println("index: " + index);
+            String newMessage = user.getNewsFeed().get(index).getMessage();
+            newsFeedModel.addElement(newMessage);
+            newsFeed.setSelectedIndex(index);
+            newsFeed.ensureIndexIsVisible(index);            
+        }
+        }
     }
     
 }

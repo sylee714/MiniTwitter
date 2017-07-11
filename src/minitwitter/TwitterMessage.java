@@ -5,11 +5,13 @@
  */
 package minitwitter;
 
+import minitwitter.Visitor.Visitor;
+
 /**
  *
  * @author MingKie
  */
-public class TwitterMessage {
+public class TwitterMessage implements Component {
     private static int size = 0;
     private static int positiveMessageSize = 0;
     private final String[] positiveWords = new String[]{"good", "great", "cool",
@@ -18,12 +20,18 @@ public class TwitterMessage {
     private String message;
     
     public TwitterMessage(String ID, String message) {
-        size++;
-        this.message = message;
-        this.ID = ID;
-        countPositiveMessage(message);
+        //if (!message.trim().equals("")) {
+            //size++;
+            this.message = message;
+            this.ID = ID;
+            countPositiveMessage(message);
+        //}
     }
 
+    public static void increaseSize() {
+        size++;
+    }
+    
     public static int getSize() {
         return size;
     }
@@ -58,5 +66,10 @@ public class TwitterMessage {
                 }
             }
         }
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitTwitterMessage(this);
     }
 }

@@ -5,6 +5,7 @@
  */
 package minitwitter.Visitor;
 
+import minitwitter.TwitterMessage;
 import minitwitter.User;
 import minitwitter.UserGroup;
 
@@ -12,7 +13,7 @@ import minitwitter.UserGroup;
  *
  * @author MingKie
  */
-public class SizeVisitor implements Visitor{
+public class SizeVisitor implements Visitor {
     
     private int userSize;
     private int userGroupSize;
@@ -31,8 +32,12 @@ public class SizeVisitor implements Visitor{
     @Override
     public void visitUser(User user) {
         setUserSize(User.getSize());
-        setMessageSize(User.getSize());
-        setPositiveMessageSize(User.getSize());
+    }
+    
+    @Override
+    public void visitTwitterMessage(TwitterMessage twitterMessage) {
+        setMessageSize(TwitterMessage.getSize());
+        setPositiveMessageSize(TwitterMessage.getPositiveMessageSize());
     }
     
     public int getUserSize() {
@@ -66,9 +71,5 @@ public class SizeVisitor implements Visitor{
     public void setPositiveMessageSize(int positiveMessageSize) {
         this.positiveMessageSize = positiveMessageSize;
     }
-    
-    
-    
-    
-    
+ 
 }

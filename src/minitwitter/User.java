@@ -17,38 +17,59 @@ import minitwitter.Visitor.Visitor;
  */
 public class User extends Subject implements Group{
     
-    private static int size = 0;
+    // 0 for followed someone and 1 for added a message.
+    private static int state;
+    private static User followingUser;
+    private static int userSize = 0;
     private String ID;
-    private List<String> followers;
-    private List<String> followings;
+    private List<User> followers;
+    private List<User> followings;
     private List<TwitterMessage> newsFeed;
     
     public User(String ID) {
-        size++;
         this.ID = ID;
         followers = new ArrayList<>();
         followings = new ArrayList<>();
         newsFeed = new ArrayList<>();
     }
-
-    public void addMessage(TwitterMessage message) {
-        newsFeed.add(message);
+    
+    public static void increaseUserSize() {
+        userSize++;
     }
     
-    public void addFollower(String follower) {
+    public static User getFollowingUser() {
+        return followingUser;
+    }
+    
+    public static int getState() {
+        return state;
+    }
+
+    public void addMessage(TwitterMessage message) {
+        state = 1;
+        newsFeed.add(message);
+        for (int i = 0; i < followers.size(); ++i) {
+            followers.get(i).addMessage(message);
+        }
+        notifyObservers();
+    }
+    
+    public void addFollower(User follower) {
         followers.add(follower);
     }
     
-    public void addFollowings(String following) {
+    public void addFollowings(User following) {
+        state = 0;
         followings.add(following);
+        notifyObservers();
     }
     
     public static int getSize() {
-        return size;
+        return userSize;
     }
 
     public static void setSize(int size) {
-        User.size = size;
+        User.userSize = size;
     }
 
     @Override
@@ -61,19 +82,19 @@ public class User extends Subject implements Group{
         this.ID = ID;
     }
 
-    public List<String> getFollowers() {
+    public List<User> getFollowers() {
         return followers;
     }
 
-    public void setFollowers(List<String> followers) {
+    public void setFollowers(List<User> followers) {
         this.followers = followers;
     }
 
-    public List<String> getFollowings() {
+    public List<User> getFollowings() {
         return followings;
     }
 
-    public void setFollowings(List<String> followings) {
+    public void setFollowings(List<User> followings) {
         this.followings = followings;
     }
 
@@ -86,7 +107,7 @@ public class User extends Subject implements Group{
     }
     
     @Override
-    public void foundUserGroup(String ID) {
+    public void findUserGroup(String ID) {
         
     }
 
@@ -98,5 +119,30 @@ public class User extends Subject implements Group{
     @Override
     public void accept(Visitor visitor) {
         visitor.visitUser(this);
+        for (int i = 0; i < newsFeed.size(); ++i) {
+            System.out.println("message accpeted");
+            newsFeed.get(i).accept(visitor);
+        }
+    }
+
+    @Override
+    public boolean search(String ID) {
+            return this.ID.equals(ID);
+    }
+    
+    
+    @Override
+    public boolean findParent(String ID) {
+        return this.ID.equals(ID);
+    }
+    
+    @Override
+    public User findUser(String ID) {
+        User user = null;
+        if (this.ID.equals(ID)) {
+            user = this;
+            followingUser = user;
+        }
+        return user;
     }
 }

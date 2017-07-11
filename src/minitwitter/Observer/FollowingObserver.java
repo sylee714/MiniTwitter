@@ -5,17 +5,38 @@
  */
 package minitwitter.Observer;
 
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
 import minitwitter.Subject.Subject;
+import minitwitter.User;
 
 /**
  *
  * @author MingKie
  */
 public class FollowingObserver implements Observer {
+    
+    private DefaultListModel followingModel;
+    private JList currentFollowing;
+    
+    public FollowingObserver(DefaultListModel followingModel, 
+            JList currentFollowing) {
+       this.followingModel = followingModel;
+       this.currentFollowing = currentFollowing; 
+    }
 
     @Override
     public void update(Subject subject) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (subject instanceof User) {
+            if (User.getState() == 0) {
+            User user = (User) subject;
+            User followingUser = User.getFollowingUser();
+            followingModel.addElement(followingUser.getId());
+            int index = user.getFollowings().size() - 1;
+            currentFollowing.setSelectedIndex(index);
+            currentFollowing.ensureIndexIsVisible(index);
+            }
+        }
     }
     
 }

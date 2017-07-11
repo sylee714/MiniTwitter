@@ -5,18 +5,14 @@
  */
 package minitwitter;
 
-import java.util.ArrayList;
-import java.util.List;
-import minitwitter.Visitor.SizeVisitor;
+import minitwitter.Visitor.Visitor;
 
 /**
  *
  * @author MingKie
  */
-public class Test {
+interface Component {
     
-    public static void main(String[] args) {
-       
-    }
+    public void accept(Visitor visitor);
     
 }
