@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package minitwitter.Observer;
 
 import javax.swing.DefaultListModel;
@@ -11,14 +6,21 @@ import minitwitter.Subject.Subject;
 import minitwitter.User;
 
 /**
- *
- * @author MingKie
+ * This class represents a following observer. Whenever a user follows another
+ * user, it updates current following list view.
+ * @author Seungyun Lee
  */
 public class FollowingObserver implements Observer {
     
     private DefaultListModel followingModel;
     private JList currentFollowing;
     
+    /**
+     * This is the constructor to create a following observer.
+     * @param followingModel, list model to update the view
+     * @param currentFollowing, JList that shows all the users that 
+     *                          the user is following 
+     */
     public FollowingObserver(DefaultListModel followingModel, 
             JList currentFollowing) {
        this.followingModel = followingModel;
@@ -29,12 +31,17 @@ public class FollowingObserver implements Observer {
     public void update(Subject subject) {
         if (subject instanceof User) {
             if (User.getState() == 0) {
-            User user = (User) subject;
-            User followingUser = User.getFollowingUser();
-            followingModel.addElement(followingUser.getId());
-            int index = user.getFollowings().size() - 1;
-            currentFollowing.setSelectedIndex(index);
-            currentFollowing.ensureIndexIsVisible(index);
+                // User that notified this observer
+                User user = (User) subject;
+                // Get the user that the current user clicked to follow
+                User followingUser = User.getFollowingUser();
+                // Add at the end
+                followingModel.addElement(followingUser.getId());
+                // Get the last index
+                int index = user.getFollowings().size() - 1;
+                // Select the last index and make it visible 
+                currentFollowing.setSelectedIndex(index);
+                currentFollowing.ensureIndexIsVisible(index);
             }
         }
     }

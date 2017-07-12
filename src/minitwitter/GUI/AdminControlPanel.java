@@ -1,29 +1,27 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package minitwitter.GUI;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.awt.Component;
+import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import minitwitter.Group;
+import javax.swing.tree.TreeCellRenderer;
 import minitwitter.Observer.TreeObserver;
 import minitwitter.TwitterMessage;
 import minitwitter.User;
 import minitwitter.UserGroup;
 import minitwitter.Visitor.SizeVisitor;
 
+
 /**
- *
- * @author MingKie
+ * This class represent AdminControlPanel GUI. On this GUI, it can add
+ * new users or new user groups, view informations, or open a user view.
+ * @author Seungyun Lee
  */
 public class AdminControlPanel extends javax.swing.JFrame {
 
+    // Only creating one instance
     private static AdminControlPanel instance;
     private UserGroup rootGroup;
     private SizeVisitor sizeVisitor;
@@ -32,15 +30,16 @@ public class AdminControlPanel extends javax.swing.JFrame {
     private DefaultMutableTreeNode rootNode;
     private User userReference;
     private TwitterMessage twitterMessageReference;
-
-    
+  
     /**
-     * Creates new form AdminControlPanel
+     * This is the constructor to create only one instance of AdminControlPanel.
      */
     private AdminControlPanel() {
         initComponents();
         rootGroup = new UserGroup("Root");
+        // User reference to visit user's size
         userReference = new User("userReference");
+        // Twitter message reference to visit its size.
         twitterMessageReference = new TwitterMessage("twitterMessageReference", 
                 "This is a reference.");
         rootNode = new DefaultMutableTreeNode(rootGroup.getId());
@@ -48,20 +47,22 @@ public class AdminControlPanel extends javax.swing.JFrame {
         treeObserver = new TreeObserver(tree, treeModel);
         sizeVisitor = new SizeVisitor();
         rootGroup.accept(sizeVisitor);
-        rootGroup.attach(treeObserver);
-        addNode();
-        
+        rootGroup.attach(treeObserver);        
     }
 
-    public static synchronized AdminControlPanel getInstance() {
+    /**
+     * This method returns the instance of AdminControlPanel.
+     * @return instance of AdminControlPanel
+     */
+    public static AdminControlPanel getInstance() {
         if(instance == null){
-        synchronized (AdminControlPanel.class) {
-            if(instance == null){
-                instance = new AdminControlPanel();
+            synchronized (AdminControlPanel.class) {
+                if(instance == null){
+                    instance = new AdminControlPanel();
+                }
             }
         }
-    }
-    return instance;
+        return instance;
     }
     
     /**
@@ -210,15 +211,21 @@ public class AdminControlPanel extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * This method lets the user to open a user view that the user selected to 
+     * view.
+     */
     private void openUserViewButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openUserViewButtonActionPerformed
         warningLabel.setText("");
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
                 tree.getLastSelectedPathComponent();
+        // Checks if nothing is selected
         if (selectedNode != null) {
             String ID = selectedNode.toString();
             rootGroup.findUserGroup(ID);
             UserGroup.getUserGroup();
             boolean isUser = !UserGroup.isFoundUserGroup();
+            // Checks if a user is selected
             if (isUser) {
                 new UserView(ID, rootGroup);
             } else {
@@ -227,29 +234,38 @@ public class AdminControlPanel extends javax.swing.JFrame {
         } else {
             warningLabel.setText("Select a User");
         }
-        
     }//GEN-LAST:event_openUserViewButtonActionPerformed
 
+    /**
+     * This method shows an information dialog with the user size.
+     */
     private void showUserTotalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showUserTotalButtonActionPerformed
         sizeVisitor.visitUser(userReference);
         createDialog("User Total", "User Total: ", sizeVisitor.getUserSize());
     }//GEN-LAST:event_showUserTotalButtonActionPerformed
 
+    /**
+     * This method shows an information dialog with the user group size.
+     */
     private void showGroupTotalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showGroupTotalButtonActionPerformed
         sizeVisitor.visitGroup(rootGroup);
         createDialog("Group Total", "Group Total: ", sizeVisitor.getUserGroupSize());
     }//GEN-LAST:event_showGroupTotalButtonActionPerformed
 
+    /**
+     * This method shows an information dialog with the message size.
+     */
     private void showMessagesTotalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showMessagesTotalButtonActionPerformed
         sizeVisitor.visitTwitterMessage(twitterMessageReference);
         createDialog("Message Total", "Message Total: ", sizeVisitor.getMessageSize());
     }//GEN-LAST:event_showMessagesTotalButtonActionPerformed
 
+    /**
+     * This method shows an information dialog with the positive message percentage.
+     */
     private void showPositivePercentageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showPositivePercentageButtonActionPerformed
         sizeVisitor.visitTwitterMessage(twitterMessageReference);
         double positivePercent = 0;
-        System.out.println("Message Total: " + sizeVisitor.getMessageSize());
-        System.out.println("Positive " + sizeVisitor.getPositiveMessageSize());
         if (sizeVisitor.getMessageSize() > 0) {
            positivePercent = ((sizeVisitor.getPositiveMessageSize() * 1.0) / 
                 sizeVisitor.getMessageSize()) * 100;
@@ -257,26 +273,43 @@ public class AdminControlPanel extends javax.swing.JFrame {
         createDialog("Positive %", "Positive %: ", positivePercent);
     }//GEN-LAST:event_showPositivePercentageButtonActionPerformed
 
+    /**
+     * This method adds a new user.
+     */
     private void addUserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addUserButtonActionPerformed
         addElement(userIDTextField, true);       
     }//GEN-LAST:event_addUserButtonActionPerformed
 
+    /**
+     * This method adds a new user group.
+     */
     private void addGroupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addGroupButtonActionPerformed
         addElement(groupIDTextField, false);
     }//GEN-LAST:event_addGroupButtonActionPerformed
     
-    public void addElement(JTextField textField, boolean isAddUser) {
+    /**
+     * This method adds either a new user or a new user group. It does
+     * error checking.
+     * @param textField, either userIDTextField or userGroupIDTextField  
+     * @param isAddUser, true, if add user button is clicked; false, if add user
+     *                  group is clicked
+     */
+    private void addElement(JTextField textField, boolean isAddUser) {
         warningLabel.setText("");
         DefaultMutableTreeNode selectedNode = (DefaultMutableTreeNode) 
                 tree.getLastSelectedPathComponent();
+        // Nothing is selected
         if (selectedNode != null) {
             String selectedID = selectedNode.toString();
             rootGroup.findUserGroup(selectedID);
             UserGroup selectedGroup = UserGroup.getUserGroup();
+            // Checks if selected one is a user group
             if (UserGroup.isFoundUserGroup()) {
                 if (!textField.getText().trim().equals("")) {
                     String newID = textField.getText();
+                    // Check if there is a user/user group with the same ID
                     if (!rootGroup.search(newID)) {
+                        // Add user
                         if (isAddUser) {
                             User user = new User(newID);
                             User.increaseUserSize();
@@ -284,6 +317,7 @@ public class AdminControlPanel extends javax.swing.JFrame {
                                     new DefaultMutableTreeNode(user.getId());
                             rootGroup.add(user, selectedNode, newNode);
                             textField.setText("");
+                        // Add user group
                         } else {
                             UserGroup userGroup = new UserGroup(newID);
                             DefaultMutableTreeNode newNode = 
@@ -305,86 +339,27 @@ public class AdminControlPanel extends javax.swing.JFrame {
         }
     }
     
+    /**
+     * This method creates an information dialog with given information.
+     * @param title, title of the information
+     * @param message, message of the information
+     * @param number, size
+     */
     private void createDialog(String title, String message, double number) {
         message = message + number;
         new InformationDialog(title, message);
     }
     
+    /**
+     * This method initializes the tree and shows it with the root group first.
+     */
     private void initalizeTree() {    
         tree = new JTree(rootNode);
+        tree.setCellRenderer(new CustomTreeCellRenderer(rootGroup));
         treeModel = (DefaultTreeModel) tree.getModel();
         treePane.setViewportView(tree);
-
     }
-    
-    public void addNode() {
-        UserGroup group1 = new UserGroup("group1");
-        UserGroup group2 = new UserGroup("group2");
-        UserGroup group3 = new UserGroup("group3");
-        UserGroup group4 = new UserGroup("group4");
-        UserGroup group5 = new UserGroup("group5");
- 
-        TwitterMessage message;
-        User user2 = new User("user2");
-        User.increaseUserSize();
-        message = new TwitterMessage(user2.getId(), "Im good");
-        user2.addMessage(message);
-        TwitterMessage.increaseSize();
-        
-        User user3 = new User("user3");
-        User.increaseUserSize();
-        message = new TwitterMessage(user3.getId(), "Im user3");
-        user2.addMessage(message);
-        TwitterMessage.increaseSize();
-        
-        User user4 = new User("user4");
-        User.increaseUserSize();
-        message = new TwitterMessage(user3.getId(), "Im user3");
-        user2.addMessage(message);
-        TwitterMessage.increaseSize();
-        
-        User user5 = new User("user5");
-        User.increaseUserSize();
-        message = new TwitterMessage(user3.getId(), "Im user3");
-        user2.addMessage(message);
-        TwitterMessage.increaseSize();
-        
-        System.out.println("Message: " + TwitterMessage.getSize());
-        System.out.println("Positive: " + TwitterMessage.getPositiveMessageSize());
-        
-        DefaultMutableTreeNode groupNode = 
-                new DefaultMutableTreeNode(group1.getId());
-        DefaultMutableTreeNode groupNode2 = 
-                new DefaultMutableTreeNode(group2.getId());
-        DefaultMutableTreeNode groupNode3 = 
-                new DefaultMutableTreeNode(group3.getId());
-        DefaultMutableTreeNode groupNode4 = 
-                new DefaultMutableTreeNode(group4.getId());
-        DefaultMutableTreeNode groupNode5 = 
-                new DefaultMutableTreeNode(group5.getId());
-        
-        DefaultMutableTreeNode userNode2 = 
-                new DefaultMutableTreeNode(user2.getId());
-        DefaultMutableTreeNode userNode3 = 
-                new DefaultMutableTreeNode(user3.getId());
-        DefaultMutableTreeNode userNode4 = 
-                new DefaultMutableTreeNode(user4.getId());
-        DefaultMutableTreeNode userNode5 = 
-                new DefaultMutableTreeNode(user5.getId());
-        
-        rootGroup.add(group1, rootNode, groupNode);
-        rootGroup.add(group2, rootNode, groupNode2);
-        rootGroup.add(group3, groupNode, groupNode3);
-        rootGroup.add(group4, groupNode3, groupNode4);
-        rootGroup.add(group5, groupNode4, groupNode5);
-        rootGroup.add(user2, groupNode3, userNode2);
-        rootGroup.add(user3, groupNode4, userNode3);
-        rootGroup.add(user4, groupNode5, userNode4);
-        rootGroup.add(user5, groupNode2, userNode5);
-        
- 
-    }
-    
+  
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton addGroupButton;
     private javax.swing.JButton addUserButton;
@@ -399,4 +374,39 @@ public class AdminControlPanel extends javax.swing.JFrame {
     private javax.swing.JTextField userIDTextField;
     private javax.swing.JLabel warningLabel;
     // End of variables declaration//GEN-END:variables
+}
+
+/**
+ * This class is to customize the tree view in order to distinguish between
+ * users and user groups.
+ */
+class CustomTreeCellRenderer implements TreeCellRenderer {
+    
+    private JLabel label;
+    private UserGroup root;
+    
+    /**
+     * This sets the label and root with the given ones.
+     * @param root, root group
+     */
+    CustomTreeCellRenderer(UserGroup root) {
+        this.root = root;
+        label = new JLabel();  
+    }
+
+    @Override
+    public Component getTreeCellRendererComponent(JTree tree, Object value, 
+            boolean selected, boolean expanded, boolean leaf, int row, 
+            boolean hasFocus) {
+        root.findUserGroup(((DefaultMutableTreeNode) value).toString());
+        // Checks if it is a user group
+        if (UserGroup.isFoundUserGroup()) {
+            UserGroup userGroup = UserGroup.getUserGroup();
+            label.setText("Group: " + userGroup.getId());
+        } else {
+            label.setText("User: " + value);
+        }
+        return label;
+    }
+    
 }

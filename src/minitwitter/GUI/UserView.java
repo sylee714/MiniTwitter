@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package minitwitter.GUI;
 
 import javax.swing.DefaultListModel;
@@ -14,12 +9,16 @@ import minitwitter.User;
 import minitwitter.UserGroup;
 
 /**
- *
- * @author MingKie
+ * This class represents a user view class. It lets the current user to
+ * follow another user and post a message.
+ * @author Seungyun Lee
  */
 public class UserView extends javax.swing.JFrame {
+    
     private String ID;
-    private UserGroup root;
+    // The root group
+    private UserGroup rootGroup;
+    // Current user
     private User user;
     private DefaultListModel followingModel;
     private DefaultListModel newsFeedModel;
@@ -27,15 +26,14 @@ public class UserView extends javax.swing.JFrame {
     private NewsFeedObserver newsFeedObserver;
   
     /**
-     * Creates new form UserView
+     * This is the constructor that creates a user view.
+     * @param ID, current user's ID
+     * @param root, root group
      */
     public UserView(String ID,UserGroup root) {
-        this.root = root;
+        this.rootGroup = root;
         this.ID = ID;
-      
-        
-        initComponents();
-        
+        initComponents();    
         user = root.findUser(ID);
         followingModel = new DefaultListModel();
         newsFeedModel = new DefaultListModel();
@@ -50,42 +48,25 @@ public class UserView extends javax.swing.JFrame {
         user.attach(newsFeedObserver);
         user.attach(followingObserver);
         this.setVisible(true);
-        follow();
-        postMessage();
+        load();
     }
     
-    private void follow() {
-        
-        User tempUser = root.findUser("user3");
-        System.out.println(tempUser.getId());
-        System.out.println(User.getFollowingUser().getId());
-        user.addFollowings(tempUser);
-        tempUser = root.findUser("user4");
-        System.out.println(tempUser.getId());
-        System.out.println(User.getFollowingUser().getId());
-        user.addFollowings(tempUser);
-        tempUser = root.findUser("user2");
-        System.out.println(tempUser.getId());
-        System.out.println(User.getFollowingUser().getId());
-        user.addFollowings(tempUser);
- 
-        
+    /**
+     * This method loads current user's following list and messages. 
+     */
+    private void load() {
+        for (int i = 0; i < user.getFollowings().size(); ++i) {
+            followingModel.addElement(user.getFollowings().get(i).getId());
+            currentFollowing.setSelectedIndex(i);
+            currentFollowing.ensureIndexIsVisible(i);
+        }
+        for (int i = 0; i < user.getNewsFeed().size(); ++i) {
+            newsFeedModel.addElement(user.getNewsFeed().get(i).getMessage());
+            newsFeed.setSelectedIndex(i);
+            newsFeed.ensureIndexIsVisible(i);
+        }
     }
     
-    
-    private void postMessage() {
-        
-        
-        TwitterMessage twitterMessage = new TwitterMessage(user.getId(), 
-                "Im great");
-        user.addMessage(twitterMessage);
-        System.out.println(user.getNewsFeed().size());
-        //newsFeedModel.addElement(twitterMessage.getMessage());
-        //int index = user.getNewsFeed().size() - 1;
-        //newsFeed.setSelectedIndex(index);
-        //newsFeed.ensureIndexIsVisible(index);
-    }
-
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -119,6 +100,11 @@ public class UserView extends javax.swing.JFrame {
         currentFollowingPane.setViewportView(currentFollowing);
 
         postTweetButton.setLabel("Post Tweet");
+        postTweetButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                postTweetButtonActionPerformed(evt);
+            }
+        });
 
         newsFeedPane.setViewportView(newsFeed);
 
@@ -190,17 +176,31 @@ public class UserView extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    /**
+     * This method sets closes the user view.
+     */
     private void closeButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closeButtonActionPerformed
         this.setVisible(false);
     }//GEN-LAST:event_closeButtonActionPerformed
-
+    
+    /**
+     * This method lets the current user to follow another user. It does
+     * error checking like missing ID, following itself, following another user
+     * that is already in the list, and entering an incorrect ID. Whenever an
+     * error occurs, it warns the current user by setting the warningLabel
+     * with a corresponding message.
+     */
     private void followUserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_followUserButtonActionPerformed
         warningLabel.setText("");
+        // Missing ID
         if (!userIDTextField.getText().trim().equals("")) {
             String followingID = userIDTextField.getText();
-            if (root.search(followingID)) {
+            // Checks if it's a correct ID 
+            if (rootGroup.search(followingID)) {
+                // Checks if it's current user's ID
                 if (!followingID.equals(user.getId())) {
-                    User followingUser = root.findUser(followingID);
+                    User followingUser = rootGroup.findUser(followingID);
+                    // Checks if it's already following that user
                     if (!user.getFollowings().contains(followingUser)) {
                         user.addFollowings(followingUser);
                         followingUser.addFollower(user);
@@ -218,6 +218,25 @@ public class UserView extends javax.swing.JFrame {
             warningLabel.setText("Enter ID");
         }
     }//GEN-LAST:event_followUserButtonActionPerformed
+    
+    /**
+     * This method lets the user to post a new message.
+     */
+    private void postTweetButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_postTweetButtonActionPerformed
+        warningLabel.setText("");
+        // Checks if the user did not type anything
+        if (!tweetMessageTextField.getText().trim().equals("")) {
+            String newMessage = user.getId() + ": " + tweetMessageTextField.getText();
+            TwitterMessage newTwitterMessage = new TwitterMessage(user.getId(), 
+                    newMessage);
+            User.setMainUser(user);
+            user.addMessage(newTwitterMessage);
+            TwitterMessage.increaseSize();
+            tweetMessageTextField.setText("");
+        } else {
+            warningLabel.setText("Enter a message");
+        }
+    }//GEN-LAST:event_postTweetButtonActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton closeButton;
@@ -232,4 +251,5 @@ public class UserView extends javax.swing.JFrame {
     private javax.swing.JTextField userIDTextField;
     private javax.swing.JLabel warningLabel;
     // End of variables declaration//GEN-END:variables
+
 }

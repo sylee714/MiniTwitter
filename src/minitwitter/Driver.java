@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package minitwitter;
 
 import java.util.ArrayList;
@@ -10,15 +5,20 @@ import java.util.List;
 import minitwitter.GUI.AdminControlPanel;
 
 /**
- *
- * @author MingKie
+ * This class has the main method to run the program.
+ * @author Seungyun Lee
  */
 public class Driver {
     
-    
+    /**
+     * This is the main method that creates the AdminControlPanel.
+     * It only creates one instance since singleton design pattern is used.
+     * @param args
+     */
     public static void main(String[] args) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             AdminControlPanel instance = AdminControlPanel.getInstance();
+            @Override
             public void run() {
                 instance.setVisible(true);
             }

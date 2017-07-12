@@ -1,18 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package minitwitter;
 
 import minitwitter.Visitor.Visitor;
 
 /**
- *
- * @author MingKie
+ * This interface represents a component that makes up Mini Twitter program.
+ * Those components are users, groups, and twitter messages.
+ * @author Seungyun Lee
  */
-interface Component {
+public interface Component {
     
+    /**
+     * This method accepts a visitor instance to let them
+     * visit certain fields.
+     * @param visitor, visitor that wants to visit certain fields
+     */
     public void accept(Visitor visitor);
     
 }

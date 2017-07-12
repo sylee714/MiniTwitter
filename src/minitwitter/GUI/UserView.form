@@ -111,6 +111,9 @@
       <Properties>
         <Property name="label" type="java.lang.String" value="Post Tweet"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="postTweetButtonActionPerformed"/>
+      </Events>
     </Component>
     <Container class="javax.swing.JScrollPane" name="newsFeedPane">
       <AuxValues>

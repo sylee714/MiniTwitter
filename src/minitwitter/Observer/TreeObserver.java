@@ -1,41 +1,41 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package minitwitter.Observer;
 
-import javax.swing.JScrollPane;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import minitwitter.Subject.Subject;
-import minitwitter.User;
 import minitwitter.UserGroup;
 
 /**
- *
- * @author MingKie
+ * This class represents TreeObserver that updates the view of JTree
+ * whenever a new user or a new user group is added.
+ * @author Seungyun Lee
  */
 public class TreeObserver implements Observer {
     
     private JTree tree;
     private DefaultTreeModel treeModel;
-
     
+    /**
+     * This is the constructor to create a tree observer.
+     * @param tree, tree that shows all the users and user groups
+     * @param treeModel, JTree model to update the view
+     */
     public TreeObserver(JTree tree, DefaultTreeModel treeModel) {
         this.tree = tree;
         this.treeModel = treeModel;
-
     }
 
     @Override
     public void update(Subject subject) { 
         if (subject instanceof UserGroup) {
-            UserGroup userGroup = ((UserGroup) subject);
-            DefaultMutableTreeNode selectedNode = userGroup.getSelectedNode();
-            DefaultMutableTreeNode newNode = userGroup.getNewNode();
+            // Selected node from the tree
+            DefaultMutableTreeNode selectedNode = UserGroup.getSelectedNode();
+            // New node that is created
+            DefaultMutableTreeNode newNode = UserGroup.getNewNode();
+            // Add the new one to the end of the selected node
             selectedNode.add(newNode);
+            // Reload to view the updated one
             treeModel.reload();          
         }
     }
