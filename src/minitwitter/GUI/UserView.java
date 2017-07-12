@@ -197,20 +197,27 @@ public class UserView extends javax.swing.JFrame {
             String followingID = userIDTextField.getText();
             // Checks if it's a correct ID 
             if (rootGroup.search(followingID)) {
-                // Checks if it's current user's ID
-                if (!followingID.equals(user.getId())) {
-                    User followingUser = rootGroup.findUser(followingID);
-                    // Checks if it's already following that user
-                    if (!user.getFollowings().contains(followingUser)) {
-                        user.addFollowings(followingUser);
-                        followingUser.addFollower(user);
-                        userIDTextField.setText("");
+                rootGroup.findUserGroup(followingID);
+                UserGroup selectedGroup = UserGroup.getUserGroup();
+                // Checks if it's trying to follow a Group
+                if (!UserGroup.isFoundUserGroup()) {
+                    // Checks if it's current user's ID
+                    if (!followingID.equals(user.getId())) {
+                        User followingUser = rootGroup.findUser(followingID);
+                        // Checks if it's already following that user
+                        if (!user.getFollowings().contains(followingUser)) {
+                            user.addFollowings(followingUser);
+                            followingUser.addFollower(user);
+                            userIDTextField.setText("");
+                        } else {
+                            warningLabel.setText("Already followed that user");
+                        }
                     } else {
-                        warningLabel.setText("Already followed that user");
+                        warningLabel.setText("Cannot follow yourself");
                     }
                 } else {
-                    warningLabel.setText("Cannot follow yourself");
-                } 
+                    warningLabel.setText("Cannot follow a group");
+                }
             } else {
                 warningLabel.setText("Enter a correct ID");
             }
