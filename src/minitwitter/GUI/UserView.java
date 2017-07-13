@@ -216,7 +216,7 @@ public class UserView extends javax.swing.JFrame {
                         warningLabel.setText("Cannot follow yourself");
                     }
                 } else {
-                    warningLabel.setText("Cannot follow a group");
+                    warningLabel.setText("Cannot follow a Group");
                 }
             } else {
                 warningLabel.setText("Enter a correct ID");
