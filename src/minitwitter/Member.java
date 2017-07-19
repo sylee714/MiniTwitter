@@ -46,8 +46,15 @@ public interface Member extends Component {
      */
     public User findUser(String ID);
     
+    /**
+     * Check if there are duplicates of the given ID
+     * @param ID user or group ID
+     */
     public void checkDuplicate(String ID);
     
+    /**
+     * Check if there is a space in ID
+     */
     public void checkSpace();
     
 }

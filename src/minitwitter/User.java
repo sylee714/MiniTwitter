@@ -70,6 +70,20 @@ public class User extends Subject implements Member{
         return user;
     }
     
+    @Override
+    public void checkDuplicate(String ID) {
+        if (getID().equals(ID)) {
+            numberOfAppearance++;
+        }
+    }
+    
+    @Override
+    public void checkSpace() {
+        if (getID().contains(" ")) {
+            numberOfInvalideUserID++;
+        }
+    }
+    
     // It's not being used by User class.
     @Override
     public void findUserGroup(String ID) {
@@ -140,6 +154,9 @@ public class User extends Subject implements Member{
         notifyObservers();
     }
     
+    /**
+     * Check and update last updated user.
+     */
     private void checkUpdatedUser() {
         if (!lastUpdatedUser.equals(null)) {
             System.out.println("Last updated user is not null");
@@ -302,19 +319,5 @@ public class User extends Subject implements Member{
     public static void setNumberOfInvalideUserID(int numberOfInvalideUserID) {
         User.numberOfInvalideUserID = numberOfInvalideUserID;
     }
-    
-    @Override
-    public void checkDuplicate(String ID) {
-        if (getID().equals(ID)) {
-            numberOfAppearance++;
-        }
-    }
-    
-    @Override
-    public void checkSpace() {
-        if (getID().contains(" ")) {
-            numberOfInvalideUserID++;
-        }
-    }
-    
+  
 }

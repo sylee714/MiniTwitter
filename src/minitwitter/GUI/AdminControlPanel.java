@@ -421,11 +421,19 @@ public class AdminControlPanel extends javax.swing.JFrame {
         forLoop(userGroupIDs, rootGroup);
     }
     
+    /**
+     * Reset counters to check valid IDs
+     */
     private void reset() {
         User.reset();
         UserGroup.reset();
     }
     
+    /**
+     * To go through every element in the root.
+     * @param listIDs list of IDs
+     * @param obj User or UserGroup
+     */
     private void forLoop(List<String> listIDs, Object obj) {
         for (int i = 0; i < listIDs.size(); ++i) {
             rootGroup.checkDuplicate(listIDs.get(i));

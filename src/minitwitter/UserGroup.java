@@ -15,6 +15,7 @@ public class UserGroup extends Subject implements Member {
     
     // Total number of groups
     private static int size = 0;
+    // To use for checking duplicates
     private static int numberOfAppearance = 0;
     private static List<String> userGroupIDs = new ArrayList<>();
     private static int numberOfInvalidUserGroupID;
@@ -90,6 +91,26 @@ public class UserGroup extends Subject implements Member {
         visitor.visitGroup(this);
         for (Member child: children) {
             child.accept(visitor);
+        }
+    }
+    
+    @Override
+    public void checkDuplicate(String ID) {
+        if (getID().contains(" ")) {
+            numberOfAppearance++;
+        }
+        for (int i = 0; i < children.size(); ++i) {
+            children.get(i).checkDuplicate(ID);
+        }
+    }
+    
+    @Override
+    public void checkSpace() {
+        if (getID().contains(" ")) {
+            numberOfInvalidUserGroupID++;
+        }
+        for (int i = 0; i < children.size(); ++i) {
+            children.get(i).checkSpace();
         }
     }
     
@@ -256,26 +277,6 @@ public class UserGroup extends Subject implements Member {
 
     public static void setNumberOfInvalidID(int numberOfInvalidID) {
         UserGroup.numberOfInvalidUserGroupID = numberOfInvalidID;
-    }
-    
-    @Override
-    public void checkDuplicate(String ID) {
-        if (getID().contains(" ")) {
-            numberOfAppearance++;
-        }
-        for (int i = 0; i < children.size(); ++i) {
-            children.get(i).checkDuplicate(ID);
-        }
-    }
-    
-    @Override
-    public void checkSpace() {
-        if (getID().contains(" ")) {
-            numberOfInvalidUserGroupID++;
-        }
-        for (int i = 0; i < children.size(); ++i) {
-            children.get(i).checkSpace();
-        }
     }
     
     public static void reset() {
