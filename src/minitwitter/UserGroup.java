@@ -15,6 +15,9 @@ public class UserGroup extends Subject implements Member {
     
     // Total number of groups
     private static int size = 0;
+    private static int numberOfAppearance = 0;
+    private static List<String> userGroupIDs = new ArrayList<>();
+    private static int numberOfInvalidUserGroupID;
     // If there is a member with the given ID
     private static boolean alreadyExist = false;
     // If it found a user group with the given name
@@ -25,7 +28,6 @@ public class UserGroup extends Subject implements Member {
     private static DefaultMutableTreeNode selectedNode;
     // The node that is newly created
     private static DefaultMutableTreeNode newNode;
-    private String ID;
     private List<Member> children;
     
     /**
@@ -33,7 +35,10 @@ public class UserGroup extends Subject implements Member {
      * @param ID, unique ID
      */
     public UserGroup(String ID) {
-        this.ID = ID;
+        setID(ID);
+        if (!userGroupIDs.contains(ID)) {
+            userGroupIDs.add(ID);   
+        }
         children = new ArrayList<>();
         size++;
     }
@@ -41,7 +46,7 @@ public class UserGroup extends Subject implements Member {
     @Override
     public boolean search(String ID) {
         boolean found = false;
-        if (this.ID.equals(ID)) {
+        if (getID().equals(ID)) {
             found = true;
         } else {
             for (Member child : children) {                                
@@ -57,7 +62,7 @@ public class UserGroup extends Subject implements Member {
     
     @Override
     public void findUserGroup(String ID) {
-        if (this.ID.equals(ID)) {
+        if (getID().equals(ID)) {
             foundUserGroup = true;
             userGroup = this;
         } else {
@@ -78,16 +83,6 @@ public class UserGroup extends Subject implements Member {
            }
         }
         return user;
-    }
-    
-     @Override
-    public String getId() {
-        return ID;
-    }
-
-    @Override
-    public void setID(String ID) {
-        this.ID = ID;
     }
     
     @Override
@@ -183,6 +178,22 @@ public class UserGroup extends Subject implements Member {
         UserGroup.size = size;
     }
 
+    public static int getNumberOfAppearance() {
+        return numberOfAppearance;
+    }
+
+    public static void setNumberOfAppearance(int numberOfAppearance) {
+        UserGroup.numberOfAppearance = numberOfAppearance;
+    }
+    
+    public static void addNumberOfAppearance(int number) {
+        numberOfAppearance = numberOfAppearance + number;
+    }
+    
+    public static void resetNumberOfAppearance() {
+        numberOfAppearance = 0;
+    }
+    
     /**
      * This method returns the selected node from the tree.
      * @return selected node from the tree
@@ -199,6 +210,14 @@ public class UserGroup extends Subject implements Member {
         UserGroup.selectedNode = selectedNode;
     }
 
+    public static List<String> getUserGroupIDs() {
+        return userGroupIDs;
+    }
+
+    public static void setUserGroupIDs(List<String> userGroupIDs) {
+        UserGroup.userGroupIDs = userGroupIDs;
+    }
+    
     /**
      * This method return the node that is newly created which will be added
      * to the tree.
@@ -224,11 +243,43 @@ public class UserGroup extends Subject implements Member {
     public User getChild(String ID) {
         User user = null;
         for(int i = 0; i < children.size(); ++i) {
-            if (children.get(i).getId().equals(ID)) {
+            if (children.get(i).getID().equals(ID)) {
                 user = (User) children.get(i);
             }
         }
         return user;
+    }
+
+    public static int getNumberOfInvalidID() {
+        return numberOfInvalidUserGroupID;
+    }
+
+    public static void setNumberOfInvalidID(int numberOfInvalidID) {
+        UserGroup.numberOfInvalidUserGroupID = numberOfInvalidID;
+    }
+    
+    @Override
+    public void checkDuplicate(String ID) {
+        if (getID().contains(" ")) {
+            numberOfAppearance++;
+        }
+        for (int i = 0; i < children.size(); ++i) {
+            children.get(i).checkDuplicate(ID);
+        }
+    }
+    
+    @Override
+    public void checkSpace() {
+        if (getID().contains(" ")) {
+            numberOfInvalidUserGroupID++;
+        }
+        for (int i = 0; i < children.size(); ++i) {
+            children.get(i).checkSpace();
+        }
+    }
+    
+    public static void reset() {
+        numberOfInvalidUserGroupID = 0;
     }
            
 }

@@ -1,17 +1,20 @@
 package minitwitter.GUI;
 
 import java.awt.Component;
+import java.util.List;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
+import minitwitter.Observer.Observer;
 import minitwitter.Observer.TreeObserver;
 import minitwitter.TwitterMessage;
 import minitwitter.User;
 import minitwitter.UserGroup;
-import minitwitter.Visitor.SizeVisitor;
+import minitwitter.Visitor.ComponentVisitor;
+import minitwitter.Visitor.Visitor;
 
 
 /**
@@ -24,8 +27,8 @@ public class AdminControlPanel extends javax.swing.JFrame {
     // Only creating one instance
     private static AdminControlPanel instance;
     private UserGroup rootGroup;
-    private SizeVisitor sizeVisitor;
-    private TreeObserver treeObserver;
+    private ComponentVisitor visitor;
+    private Observer treeObserver;
     private DefaultTreeModel treeModel;
     private DefaultMutableTreeNode rootNode;
     private User userReference;
@@ -42,11 +45,11 @@ public class AdminControlPanel extends javax.swing.JFrame {
         // Twitter message reference to visit its size.
         twitterMessageReference = new TwitterMessage("twitterMessageReference", 
                 "This is a reference.");
-        rootNode = new DefaultMutableTreeNode(rootGroup.getId());
+        rootNode = new DefaultMutableTreeNode(rootGroup.getID());
         initalizeTree();
         treeObserver = new TreeObserver(tree, treeModel);
-        sizeVisitor = new SizeVisitor();
-        rootGroup.accept(sizeVisitor);
+        visitor = new ComponentVisitor();
+        rootGroup.accept(visitor);
         rootGroup.attach(treeObserver);        
     }
 
@@ -76,6 +79,7 @@ public class AdminControlPanel extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton1 = new javax.swing.JButton();
         treePane = new javax.swing.JScrollPane();
         tree = new javax.swing.JTree();
         addUserButton = new javax.swing.JButton();
@@ -88,8 +92,13 @@ public class AdminControlPanel extends javax.swing.JFrame {
         userIDTextField = new javax.swing.JTextField();
         groupIDTextField = new javax.swing.JTextField();
         warningLabel = new javax.swing.JLabel();
+        verifyButton = new javax.swing.JButton();
+        lastUpdatedUserButton = new javax.swing.JButton();
+
+        jButton1.setText("jButton1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setPreferredSize(new java.awt.Dimension(650, 400));
 
         javax.swing.tree.DefaultMutableTreeNode treeNode1 = new javax.swing.tree.DefaultMutableTreeNode("root");
         tree.setModel(new javax.swing.tree.DefaultTreeModel(treeNode1));
@@ -151,6 +160,20 @@ public class AdminControlPanel extends javax.swing.JFrame {
 
         warningLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
+        verifyButton.setLabel("Verifty IDs");
+        verifyButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                verifyButtonActionPerformed(evt);
+            }
+        });
+
+        lastUpdatedUserButton.setText("Last Updated User");
+        lastUpdatedUserButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                lastUpdatedUserButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -178,8 +201,12 @@ public class AdminControlPanel extends javax.swing.JFrame {
                         .addComponent(groupIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(addGroupButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(openUserViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(openUserViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(verifyButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lastUpdatedUserButton, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(29, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -192,12 +219,13 @@ public class AdminControlPanel extends javax.swing.JFrame {
                     .addComponent(warningLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(11, 11, 11)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(treePane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(groupIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(addGroupButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(openUserViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(openUserViewButton, javax.swing.GroupLayout.DEFAULT_SIZE, 52, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(showUserTotalButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -205,8 +233,11 @@ public class AdminControlPanel extends javax.swing.JFrame {
                         .addGap(11, 11, 11)
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(showMessagesTotalButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(showPositivePercentageButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(treePane, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                            .addComponent(showPositivePercentageButton, javax.swing.GroupLayout.PREFERRED_SIZE, 40, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(verifyButton, javax.swing.GroupLayout.DEFAULT_SIZE, 26, Short.MAX_VALUE)
+                            .addComponent(lastUpdatedUserButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                 .addContainerGap())
         );
 
@@ -242,37 +273,37 @@ public class AdminControlPanel extends javax.swing.JFrame {
      * This method shows an information dialog with the user size.
      */
     private void showUserTotalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showUserTotalButtonActionPerformed
-        sizeVisitor.visitUser(userReference);
-        createDialog("User Total", "User Total: ", sizeVisitor.getUserSize());
+        visitor.visitUser(userReference);
+        createDialog("User Total", "User Total: ", visitor.getUserSize() + "");
     }//GEN-LAST:event_showUserTotalButtonActionPerformed
 
     /**
      * This method shows an information dialog with the user group size.
      */
     private void showGroupTotalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showGroupTotalButtonActionPerformed
-        sizeVisitor.visitGroup(rootGroup);
-        createDialog("Group Total", "Group Total: ", sizeVisitor.getUserGroupSize());
+        visitor.visitGroup(rootGroup);
+        createDialog("Group Total", "Group Total: ", visitor.getUserGroupSize() + "");
     }//GEN-LAST:event_showGroupTotalButtonActionPerformed
 
     /**
      * This method shows an information dialog with the message size.
      */
     private void showMessagesTotalButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showMessagesTotalButtonActionPerformed
-        sizeVisitor.visitTwitterMessage(twitterMessageReference);
-        createDialog("Message Total", "Message Total: ", sizeVisitor.getMessageSize());
+        visitor.visitTwitterMessage(twitterMessageReference);
+        createDialog("Message Total", "Message Total: ", visitor.getMessageSize() + "");
     }//GEN-LAST:event_showMessagesTotalButtonActionPerformed
 
     /**
      * This method shows an information dialog with the positive message percentage.
      */
     private void showPositivePercentageButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showPositivePercentageButtonActionPerformed
-        sizeVisitor.visitTwitterMessage(twitterMessageReference);
+        visitor.visitTwitterMessage(twitterMessageReference);
         double positivePercent = 0;
-        if (sizeVisitor.getMessageSize() > 0) {
-           positivePercent = ((sizeVisitor.getPositiveMessageSize() * 1.0) / 
-                sizeVisitor.getMessageSize()) * 100;
+        if (visitor.getMessageSize() > 0) {
+           positivePercent = ((visitor.getPositiveMessageSize() * 1.0) / 
+                visitor.getMessageSize()) * 100;
         }
-        createDialog("Positive %", "Positive %: ", positivePercent);
+        createDialog("Positive %", "Positive %: ", positivePercent + "");
     }//GEN-LAST:event_showPositivePercentageButtonActionPerformed
 
     /**
@@ -288,6 +319,27 @@ public class AdminControlPanel extends javax.swing.JFrame {
     private void addGroupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addGroupButtonActionPerformed
         addElement(groupIDTextField, false);
     }//GEN-LAST:event_addGroupButtonActionPerformed
+
+    private void lastUpdatedUserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_lastUpdatedUserButtonActionPerformed
+        visitor.visitUser(userReference);
+        System.out.println("Last updated user is " + User.isCheckLastUpdatedUser());
+        if (User.isCheckLastUpdatedUser()) {
+            String lastUpdatedUserID = visitor.getLastUpdatedUser().getID();
+            createDialog("Last Updated User", "ID: ", lastUpdatedUserID);
+        } else {
+            // When no one is updated
+            createDialog("Last Updated User", "ID: ", "NO ONE");
+        }
+    }//GEN-LAST:event_lastUpdatedUserButtonActionPerformed
+
+    private void verifyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_verifyButtonActionPerformed
+        checkIDs();
+        visitor.visitUser(userReference);
+        visitor.visitGroup(rootGroup);
+        visitor.setNumberOfInvalideID();
+        createDialog("Number of Invalide IDs", "Invalid IDs: ", visitor.getNumberOfInvalideID() + "");
+        reset();
+    }//GEN-LAST:event_verifyButtonActionPerformed
     
     /**
      * This method adds either a new user or a new user group. It does
@@ -314,16 +366,19 @@ public class AdminControlPanel extends javax.swing.JFrame {
                         // Add user
                         if (isAddUser) {
                             User user = new User(newID);
+                            user.setCreationTime(System.currentTimeMillis());
+                            user.setLastUpdateTime(0);
                             User.increaseUserSize();
                             DefaultMutableTreeNode newNode = 
-                                    new DefaultMutableTreeNode(user.getId());
+                                    new DefaultMutableTreeNode(user.getID());
                             rootGroup.add(user, selectedNode, newNode);
                             textField.setText("");
                         // Add user group
                         } else {
                             UserGroup userGroup = new UserGroup(newID);
+                            userGroup.setCreationTime(System.currentTimeMillis());
                             DefaultMutableTreeNode newNode = 
-                                new DefaultMutableTreeNode(userGroup.getId());
+                                new DefaultMutableTreeNode(userGroup.getID());
                             rootGroup.add(userGroup, selectedNode, newNode);
                             textField.setText("");
                         }
@@ -347,9 +402,50 @@ public class AdminControlPanel extends javax.swing.JFrame {
      * @param message, message of the information
      * @param number, size
      */
-    private void createDialog(String title, String message, double number) {
+    private void createDialog(String title, String message, String number) {
         message = message + number;
         new InformationDialog(title, message);
+    }
+    
+    private void checkIDs() {
+        List<String> userIDs = User.getUserIDs();
+        for (int i = 0; i < userIDs.size(); ++i) {
+            System.out.println(userIDs.get(i));
+        }
+        List<String> userGroupIDs = UserGroup.getUserGroupIDs();
+        for (int i = 0; i < userGroupIDs.size(); ++i) {
+            System.out.println(userGroupIDs.get(i));
+        }
+        rootGroup.checkSpace();
+        forLoop(userIDs, userReference);
+        forLoop(userGroupIDs, rootGroup);
+    }
+    
+    private void reset() {
+        User.reset();
+        UserGroup.reset();
+    }
+    
+    private void forLoop(List<String> listIDs, Object obj) {
+        for (int i = 0; i < listIDs.size(); ++i) {
+            rootGroup.checkDuplicate(listIDs.get(i));
+            int numberOfAppearance = 0;
+            if (obj instanceof User) {
+                numberOfAppearance = User.getNumberOfAppearance();
+            } else {
+                numberOfAppearance = UserGroup.getNumberOfAppearance();
+            }
+            numberOfAppearance = numberOfAppearance - 1;
+            if (numberOfAppearance != 0) {
+                if (obj instanceof User) {
+                    User.addNumberOfAppearance(numberOfAppearance);
+                } else {
+                    UserGroup.addNumberOfAppearance(numberOfAppearance);
+                }
+            }
+            User.resetNumberOfAppearance();
+            UserGroup.resetNumberOfAppearance();
+        }
     }
     
     /**
@@ -368,6 +464,8 @@ public class AdminControlPanel extends javax.swing.JFrame {
     private javax.swing.JButton addGroupButton;
     private javax.swing.JButton addUserButton;
     private javax.swing.JTextField groupIDTextField;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton lastUpdatedUserButton;
     private javax.swing.JButton openUserViewButton;
     private javax.swing.JButton showGroupTotalButton;
     private javax.swing.JButton showMessagesTotalButton;
@@ -376,6 +474,7 @@ public class AdminControlPanel extends javax.swing.JFrame {
     private javax.swing.JTree tree;
     private javax.swing.JScrollPane treePane;
     private javax.swing.JTextField userIDTextField;
+    private javax.swing.JButton verifyButton;
     private javax.swing.JLabel warningLabel;
     // End of variables declaration//GEN-END:variables
 

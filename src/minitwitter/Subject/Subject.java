@@ -9,8 +9,25 @@ import minitwitter.Observer.Observer;
  * concrete subject classes.
  */
 public abstract class Subject {
-    
     private List<Observer> observers = new ArrayList<Observer>();
+    private long creationTime;
+    private String ID;
+
+    public String getID() {
+        return ID;
+    }
+
+    public void setID(String ID) {
+        this.ID = ID;
+    }
+
+    public long getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(long creationTime) {
+        this.creationTime = creationTime;
+    }
     
     /**
      * This method adds observers to the list.

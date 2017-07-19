@@ -36,7 +36,7 @@ public class FollowingObserver implements Observer {
                 // Get the user that the current user clicked to follow
                 User followingUser = User.getFollowingUser();
                 // Add at the end
-                followingModel.addElement(followingUser.getId());
+                followingModel.addElement(followingUser.getID());
                 // Get the last index
                 int index = user.getFollowings().size() - 1;
                 // Select the last index and make it visible 

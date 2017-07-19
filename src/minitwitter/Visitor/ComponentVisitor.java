@@ -9,8 +9,12 @@ import minitwitter.UserGroup;
  * and gets their sizes.
  * @author Seungyun Lee
  */
-public class SizeVisitor implements Visitor {
+public class ComponentVisitor implements Visitor {
     
+    private User lastUpdatedUser;
+    private int numberOfInvalideID;
+    private int numberOfInvalideUserID;
+    private int numberOfInvalidUserGroupID;
     private int userSize;
     private int userGroupSize;
     private int messageSize;
@@ -19,17 +23,20 @@ public class SizeVisitor implements Visitor {
     /**
      * This is the constructor to create a size visitor.
      */
-    public SizeVisitor() {       
+    public ComponentVisitor() {       
     }
 
     @Override
     public void visitGroup(UserGroup userGroup) {
         setUserGroupSize(UserGroup.getSize());
+        setNumberOfInvalidUserGroupID(UserGroup.getNumberOfInvalidID());
     }
 
     @Override
     public void visitUser(User user) {
         setUserSize(User.getSize());
+        setLastUpdatedUser(User.getLastUpdatedUser());
+        setNumberOfInvalideUserID(User.getNumberOfInvalideUserID());
     }
     
     @Override
@@ -101,5 +108,37 @@ public class SizeVisitor implements Visitor {
     public void setPositiveMessageSize(int positiveMessageSize) {
         this.positiveMessageSize = positiveMessageSize;
     }
- 
+
+    public void setLastUpdatedUser(User lastUpdatedUser) {
+        this.lastUpdatedUser = lastUpdatedUser;
+    }
+
+    public User getLastUpdatedUser() {
+        return lastUpdatedUser;
+    }
+
+    public int getNumberOfInvalideID() {
+        return numberOfInvalideID;
+    }
+
+    public void setNumberOfInvalideID() {
+        numberOfInvalideID = numberOfInvalideUserID + numberOfInvalidUserGroupID;
+    }
+
+    public int getNumberOfInvalideUserID() {
+        return numberOfInvalideUserID;
+    }
+
+    public void setNumberOfInvalideUserID(int numberOfInvalideUserID) {
+        this.numberOfInvalideUserID = numberOfInvalideUserID;
+    }
+
+    public int getNumberOfInvalidUserGroupID() {
+        return numberOfInvalidUserGroupID;
+    }
+
+    public void setNumberOfInvalidUserGroupID(int numberOfInvalidUserGroupID) {
+        this.numberOfInvalidUserGroupID = numberOfInvalidUserGroupID;
+    }
+    
 }

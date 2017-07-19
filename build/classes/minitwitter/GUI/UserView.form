@@ -27,20 +27,31 @@
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="warningLabel" max="32767" attributes="0"/>
+                  <Component id="currentFollowingPane" alignment="0" max="32767" attributes="0"/>
+                  <Component id="newsFeedPane" alignment="0" max="32767" attributes="0"/>
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="userIDTextField" min="-2" pref="130" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                      <Component id="followUserButton" min="-2" pref="130" max="-2" attributes="0"/>
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                      <Component id="followUserButton" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="currentFollowingPane" alignment="0" max="32767" attributes="0"/>
-                  <Group type="102" alignment="1" attributes="0">
+                  <Group type="102" attributes="0">
+                      <Component id="currentUserIDTextField" min="-2" pref="84" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="updatedTimeLabel" min="-2" pref="84" max="-2" attributes="0"/>
+                          <Component id="creationTimeLabel" min="-2" pref="84" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="updatedTime" max="32767" attributes="0"/>
+                          <Component id="creationTime" max="32767" attributes="0"/>
+                      </Group>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
                       <Component id="tweetMessageTextField" min="-2" pref="160" max="-2" attributes="0"/>
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Component id="postTweetButton" min="-2" pref="100" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="postTweetButton" pref="173" max="32767" attributes="0"/>
                   </Group>
-                  <Component id="newsFeedPane" alignment="0" max="32767" attributes="0"/>
-                  <Component id="currentUserIDTextField" alignment="1" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -55,9 +66,25 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="currentUserIDTextField" pref="41" max="32767" attributes="0"/>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="warningLabel" min="-2" pref="26" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <Component id="currentUserIDTextField" max="32767" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="creationTimeLabel" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                          <Component id="creationTime" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace pref="9" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="updatedTimeLabel" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                          <Component id="updatedTime" alignment="3" min="-2" pref="25" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="3" max="-2" attributes="0"/>
+                  </Group>
+              </Group>
+              <Component id="warningLabel" min="-2" pref="19" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="userIDTextField" alignment="3" min="-2" pref="50" max="-2" attributes="0"/>
@@ -161,6 +188,20 @@
       <Properties>
         <Property name="horizontalAlignment" type="int" value="0"/>
       </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="creationTimeLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Creation Time"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="updatedTimeLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Updated Time"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="creationTime">
+    </Component>
+    <Component class="javax.swing.JLabel" name="updatedTime">
     </Component>
   </SubComponents>
 </Form>

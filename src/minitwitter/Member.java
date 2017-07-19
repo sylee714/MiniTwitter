@@ -20,17 +20,18 @@ public interface Member extends Component {
      */
     public boolean search(String ID);
     
+    
     /**
      * This method sets the ID of a member.
      * @param ID, a unique ID
      */
-    public void setID(String ID);
+    //public void setID(String ID);
     
     /**
      * This method returns the ID of a member.
      * @return member's ID
      */
-    public String getId();
+    public String getID();
 
     /**
      * This method finds if there is a user group with the given ID.
@@ -44,5 +45,9 @@ public interface Member extends Component {
      * @return the user with the given ID
      */
     public User findUser(String ID);
+    
+    public void checkDuplicate(String ID);
+    
+    public void checkSpace();
     
 }

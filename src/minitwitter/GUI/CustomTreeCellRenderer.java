@@ -37,7 +37,7 @@ class CustomTreeCellRenderer implements TreeCellRenderer {
         // Checks if it is a user group
         if (UserGroup.isFoundUserGroup()) {
             UserGroup userGroup = UserGroup.getUserGroup();
-            label.setText("Group: " + userGroup.getId());
+            label.setText("Group: " + userGroup.getID());
         } else {
             label.setText("User: " + value);
         }

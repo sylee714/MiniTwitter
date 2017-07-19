@@ -4,6 +4,8 @@ import javax.swing.DefaultListModel;
 import javax.swing.JList;
 import minitwitter.Observer.FollowingObserver;
 import minitwitter.Observer.NewsFeedObserver;
+import minitwitter.Observer.Observer;
+import minitwitter.Observer.UpdatedTimeObserver;
 import minitwitter.TwitterMessage;
 import minitwitter.User;
 import minitwitter.UserGroup;
@@ -22,8 +24,9 @@ public class UserView extends javax.swing.JFrame {
     private User user;
     private DefaultListModel followingModel;
     private DefaultListModel newsFeedModel;
-    private FollowingObserver followingObserver;
-    private NewsFeedObserver newsFeedObserver;
+    private Observer followingObserver;
+    private Observer newsFeedObserver;
+    private Observer updatedTimeObserver;
   
     /**
      * This is the constructor that creates a user view.
@@ -39,14 +42,18 @@ public class UserView extends javax.swing.JFrame {
         newsFeedModel = new DefaultListModel();
         currentFollowing = new JList(followingModel);
         newsFeed = new JList(newsFeedModel);
-        currentUserIDTextField.setText(user.getId());
+        currentUserIDTextField.setText(user.getID());
         currentFollowingPane.setViewportView(currentFollowing);
         newsFeedPane.setViewportView(newsFeed);
         followingObserver = new FollowingObserver(followingModel, 
                 currentFollowing);
         newsFeedObserver = new NewsFeedObserver(newsFeedModel, newsFeed);
+        updatedTimeObserver = new UpdatedTimeObserver(updatedTime);
         user.attach(newsFeedObserver);
         user.attach(followingObserver);
+        user.attach(updatedTimeObserver);
+        creationTime.setText(user.getCreationTime() + "");
+        updatedTime.setText(user.getLastUpdateTime() + "");
         this.setVisible(true);
         load();
     }
@@ -56,7 +63,7 @@ public class UserView extends javax.swing.JFrame {
      */
     private void load() {
         for (int i = 0; i < user.getFollowings().size(); ++i) {
-            followingModel.addElement(user.getFollowings().get(i).getId());
+            followingModel.addElement(user.getFollowings().get(i).getID());
             currentFollowing.setSelectedIndex(i);
             currentFollowing.ensureIndexIsVisible(i);
         }
@@ -89,6 +96,10 @@ public class UserView extends javax.swing.JFrame {
         closeButton = new javax.swing.JButton();
         warningLabel = new javax.swing.JLabel();
         currentUserIDTextField = new javax.swing.JLabel();
+        creationTimeLabel = new javax.swing.JLabel();
+        updatedTimeLabel = new javax.swing.JLabel();
+        creationTime = new javax.swing.JLabel();
+        updatedTime = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -125,6 +136,10 @@ public class UserView extends javax.swing.JFrame {
 
         currentUserIDTextField.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
 
+        creationTimeLabel.setText("Creation Time");
+
+        updatedTimeLabel.setText("Updated Time");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -133,18 +148,26 @@ public class UserView extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(warningLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(currentFollowingPane)
+                    .addComponent(newsFeedPane)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(userIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(followUserButton, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(currentFollowingPane)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(followUserButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(currentUserIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(updatedTimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(creationTimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(updatedTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(creationTime, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(layout.createSequentialGroup()
                         .addComponent(tweetMessageTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(postTweetButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(newsFeedPane)
-                    .addComponent(currentUserIDTextField, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(18, 18, 18)
+                        .addComponent(postTweetButton, javax.swing.GroupLayout.DEFAULT_SIZE, 173, Short.MAX_VALUE)))
                 .addContainerGap())
             .addGroup(layout.createSequentialGroup()
                 .addGap(116, 116, 116)
@@ -155,9 +178,20 @@ public class UserView extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(currentUserIDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 41, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(warningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 26, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(currentUserIDTextField, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(creationTimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(creationTime, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(updatedTimeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(updatedTime, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(3, 3, 3)))
+                .addComponent(warningLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(userIDTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 50, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -204,7 +238,7 @@ public class UserView extends javax.swing.JFrame {
                 // Checks if it's trying to follow a Group
                 if (!UserGroup.isFoundUserGroup()) {
                     // Checks if it's current user's ID
-                    if (!followingID.equals(user.getId())) {
+                    if (!followingID.equals(user.getID())) {
                         User followingUser = rootGroup.findUser(followingID);
                         // Checks if it's already following that user
                         if (!user.getFollowings().contains(followingUser)) {
@@ -235,11 +269,12 @@ public class UserView extends javax.swing.JFrame {
         warningLabel.setText("");
         // Checks if the user did not type anything
         if (!tweetMessageTextField.getText().trim().equals("")) {
-            String newMessage = user.getId() + ": " + tweetMessageTextField.getText();
-            TwitterMessage newTwitterMessage = new TwitterMessage(user.getId(), 
+            String newMessage = user.getID() + ": " + tweetMessageTextField.getText();
+            TwitterMessage newTwitterMessage = new TwitterMessage(user.getID(), 
                     newMessage);
             User.setMainUser(user);
-            user.addMessage(newTwitterMessage);
+            User.setLastUpdatedUser(user);
+            user.addMessage(newTwitterMessage, System.currentTimeMillis());
             TwitterMessage.increaseSize();
             tweetMessageTextField.setText("");
         } else {
@@ -251,6 +286,8 @@ public class UserView extends javax.swing.JFrame {
     // I cannot modify.
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton closeButton;
+    private javax.swing.JLabel creationTime;
+    private javax.swing.JLabel creationTimeLabel;
     private javax.swing.JList<String> currentFollowing;
     private javax.swing.JScrollPane currentFollowingPane;
     private javax.swing.JLabel currentUserIDTextField;
@@ -259,6 +296,8 @@ public class UserView extends javax.swing.JFrame {
     private javax.swing.JScrollPane newsFeedPane;
     private javax.swing.JButton postTweetButton;
     private javax.swing.JTextField tweetMessageTextField;
+    private javax.swing.JLabel updatedTime;
+    private javax.swing.JLabel updatedTimeLabel;
     private javax.swing.JTextField userIDTextField;
     private javax.swing.JLabel warningLabel;
     // End of variables declaration//GEN-END:variables

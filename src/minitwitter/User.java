@@ -12,43 +12,41 @@ import minitwitter.Visitor.Visitor;
  * @author Seungyun Lee
  */
 public class User extends Subject implements Member{
-    
     // The one who performed an action: either following someone
     // or posting a message
     private static User mainUser;
     // 0 for followed someone and 1 for added a message
     private static int state;
+    private static int numberOfInvalideUserID;
     // User that current user has chose to follow
     private static User followingUser;
+    private static User lastUpdatedUser = null;
+    private static boolean checkLastUpdatedUser = false;
     // Total number of users
     private static int userSize = 0;
-    private String ID;
+    private static int numberOfAppearance = 0;
     private List<User> followers;
     // List of users that current user is following
     private List<User> followings;
     private List<TwitterMessage> newsFeed;
+    private static String lastUpdateUserID = "NO ONE";
+    private static List<String> userIDs = new ArrayList<>();
+    private long lastUpdateTime;
     
     /**
      * This is the constructor that creates a user with the given ID.
      * @param ID
      */
     public User(String ID) {
-        this.ID = ID;
+        setID(ID);
+        if (!userIDs.contains(ID)) {
+            userIDs.add(ID);   
+        }
         followers = new ArrayList<>();
         followings = new ArrayList<>();
         newsFeed = new ArrayList<>();
     }
     
-    @Override
-    public String getId() {
-        return ID;
-    }
-
-    @Override
-    public void setID(String ID) {
-        this.ID = ID;
-    }
-  
     @Override
     public void accept(Visitor visitor) {
         visitor.visitUser(this);
@@ -59,13 +57,13 @@ public class User extends Subject implements Member{
 
     @Override
     public boolean search(String ID) {
-            return this.ID.equals(ID);
+        return getID().equals(ID);
     }
     
     @Override
     public User findUser(String ID) {
         User user = null;
-        if (this.ID.equals(ID)) {
+        if (getID().equals(ID)) {
             user = this;
             followingUser = user;
         }
@@ -76,6 +74,18 @@ public class User extends Subject implements Member{
     @Override
     public void findUserGroup(String ID) {
         
+    }
+    
+    public static void reset() {
+        numberOfInvalideUserID = 0;
+    }
+
+    public static User getLastUpdatedUser() {
+        return lastUpdatedUser;
+    }
+
+    public static void setLastUpdatedUser(User lastUpdatedUser) {
+        User.lastUpdatedUser = lastUpdatedUser;
     }
 
     /**
@@ -114,19 +124,53 @@ public class User extends Subject implements Member{
      * to update the view.
      * @param message, message that current user typed
      */
-    public void addMessage(TwitterMessage message) {
+    public void addMessage(TwitterMessage message, long updatedTime) {
         // Sets state as 1
         state = 1;
         newsFeed.add(message);
+        setLastUpdateTime(System.currentTimeMillis());
+        checkUpdatedUser();
         // Checks if the one who's calling the method is the current user.
         // If it's not do not go thru their followers.
         if (mainUser.equals(this)) {
             for (int i = 0; i < followers.size(); ++i) {
-                followers.get(i).addMessage(message);
+                followers.get(i).addMessage(message, updatedTime);
             }
         }
         notifyObservers();
     }
+    
+    private void checkUpdatedUser() {
+        if (!lastUpdatedUser.equals(null)) {
+            System.out.println("Last updated user is not null");
+            //lastUpdatedUser = this;
+            setCheckLastUpdatedUser(true);
+            if (lastUpdatedUser.getLastUpdateTime() < this.getLastUpdateTime()) {
+                lastUpdatedUser = this;
+                lastUpdateUserID = lastUpdatedUser.getID();
+                setCheckLastUpdatedUser(true);
+                System.out.println("New last updated user");
+            }
+        } else if (lastUpdatedUser.equals(null)) {
+            System.out.println("Last user is set");
+            setCheckLastUpdatedUser(true);
+            lastUpdatedUser = this;
+            lastUpdateUserID = lastUpdatedUser.getID();
+        }
+    }
+
+    public static boolean isCheckLastUpdatedUser() {
+        return checkLastUpdatedUser;
+    }
+
+    public static void setCheckLastUpdatedUser(boolean checkLastUpdatedUser) {
+        User.checkLastUpdatedUser = checkLastUpdatedUser;
+    }
+    
+    
+    //public static boolean checkLastUpdatedUser() {
+      //  return lastUpdatedUser.equals(null);
+    //}
     
     /**
      * This method adds a follower to the follower list.
@@ -163,6 +207,14 @@ public class User extends Subject implements Member{
         User.userSize = size;
     }
 
+    public static String getLastUpdateUserID() {
+        return lastUpdateUserID;
+    }
+
+    public static void setLastUpdateUserID(String lastUpdateUserID) {
+        User.lastUpdateUserID = lastUpdateUserID;
+    }
+  
     /**
      * This method returns the list of followers.
      * @return list of followers
@@ -195,6 +247,30 @@ public class User extends Subject implements Member{
         this.followings = followings;
     }
 
+    public static int getNumberOfAppearance() {
+        return numberOfAppearance;
+    }
+
+    public static void setNumberOfAppearance(int numberOfAppearance) {
+        User.numberOfAppearance = numberOfAppearance;
+    }
+    
+    public static void addNumberOfAppearance(int number) {
+        numberOfAppearance = numberOfAppearance + number;
+    }
+    
+    public static void resetNumberOfAppearance() {
+        numberOfAppearance = 0;
+    }
+    
+    public long getLastUpdateTime() {
+        return lastUpdateTime;
+    }
+
+    public void setLastUpdateTime(long lastUpdateTime) {
+        this.lastUpdateTime = lastUpdateTime;
+    }
+    
     /**
      * This method returns the list of Twitter messages which is a news feed.
      * @return news feed
@@ -203,12 +279,42 @@ public class User extends Subject implements Member{
         return newsFeed;
     }
 
+    public static List<String> getUserIDs() {
+        return userIDs;
+    }
+
+    public static void setUserIDs(List<String> userIDs) {
+        User.userIDs = userIDs;
+    }
+    
     /**
      * This method sets the news feed with the given list.
      * @param newsFeed, news feed
      */
     public void setNewsFeed(List<TwitterMessage> newsFeed) {
         this.newsFeed = newsFeed;
+    }
+
+    public static int getNumberOfInvalideUserID() {
+        return numberOfInvalideUserID;
+    }
+
+    public static void setNumberOfInvalideUserID(int numberOfInvalideUserID) {
+        User.numberOfInvalideUserID = numberOfInvalideUserID;
+    }
+    
+    @Override
+    public void checkDuplicate(String ID) {
+        if (getID().equals(ID)) {
+            numberOfAppearance++;
+        }
+    }
+    
+    @Override
+    public void checkSpace() {
+        if (getID().contains(" ")) {
+            numberOfInvalideUserID++;
+        }
     }
     
 }
